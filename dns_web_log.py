@@ -7,9 +7,9 @@ import re
 import os
 import coloredlogs
 import logging
-import time
 import sqlite3
 import multiprocessing
+from datetime import datetime, timedelta, timezone
 from dnslib import QTYPE, zoneresolver
 from dnslib.server import DNSServer, DNSLogger
 from flask import request, Flask, g, render_template
@@ -42,7 +42,8 @@ def getModuleLogger(moduleName):
 
 class Logger(DNSLogger):
     def log_request(self, handler, request):
-        times = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc)
+        times = utc_dt.astimezone(timezone(timedelta(hours=8)))
         loggings = getModuleLogger("dns_web_logs")
         global DNS_DOMAIN
         domain = request.q.qname.__str__()
@@ -138,10 +139,14 @@ def teardown_request(exception):
 def Hello_World(_):
     if _ == "favicon.ico":
         return 'error'
+    url = request.url
+    global DNS_DOMAIN
+    if DNS_DOMAIN not in url:
+        return 'error'
     host = request.remote_addr
     ua = request.headers.get('User-Agent') or ''
-    url = request.url
-    times = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc)
+    times = utc_dt.astimezone(timezone(timedelta(hours=8)))
     g.db.execute('insert into web_logs (url, ua, host, times) values (:web_url, :web_ua, :web_host, :web_times)' , {'web_url':url, 'web_ua':ua, 'web_host':host, 'web_times':times})
     g.db.commit()
     return '<body>Success</body>'
@@ -149,7 +154,7 @@ def Hello_World(_):
 
 @app.route('/admin/show_<any(web,dns):page_name>')
 def test(page_name):
-        if page_name == "web":
+    if page_name == "web":
         cur = g.db.execute('select url, ua, host, times from web_logs')
         data = [dict(url=row[0], ua=row[1], host=row[2], times=row[3]) for row in cur.fetchall()]
         return render_template("show_web.html", datas=data)
