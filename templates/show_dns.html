@@ -15,7 +15,6 @@
 					<li>
 						<a href="/admin/show_web?page=1" data-toggle="tab">Web_Logs</a>
 					</li>
-
 					<li class="active">
 						<a href="/admin/show_dns?page=1" data-toggle="tab">Dns_Logs</a>
 					</li>
@@ -23,45 +22,40 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-552347">
 						<p>
-<table class="table table-hover">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>url</th>
-          <th>host</th>
-          <th>qtype</th>
-          <th>times</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for data in datas %}
-        <tr>
-          <th scope="row">{{ loop.index }}</th>
-          <td>{{ data['url'] }}</td>
-          <td>{{ data['host'] }}</td>
-          <td>{{ data['qtype'] }}</td>
-          <td>{{ data['times'] }}</td>
-        </tr>
-      {% endfor %}
-
-      </tbody>
-    </table>
+                            <table class="table table-hover">
+                                  <thead>
+                                        <tr>
+                                          <th>#</th>
+                                          <th>url</th>
+                                          <th>host</th>
+                                          <th>qtype</th>
+                                          <th>times</th>
+                                        </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for data in datas %}
+                                        <tr>
+                                          <th scope="row">{{ loop.index }}</th>
+                                          <td>{{ data['url'] }}</td>
+                                          <td>{{ data['host'] }}</td>
+                                          <td>{{ data['qtype'] }}</td>
+                                          <td>{{ data['times'] }}</td>
+                                        </tr>
+                                      {% endfor %}
+                                  </tbody>
+                                </table>
          				</p>
 					</div>
 				</div>
               <nav class="center-block">
               <ul class="pagination">
                   <li ><a href='javascript:window.history.go(-1);'>上一页</a></li>
-
-              {% for number in range(1,num) %}
-               <li ><a href="/admin/show_dns?page={{ number }}" aria-label="Previous">{{ number }}</a></li>
-              {% endfor %}
+                  {% for number in range(1,num) %}
+                       <li ><a href="/admin/show_dns?page={{ number }}" aria-label="Previous">{{ number }}</a></li>
+                  {% endfor %}
               </ul>
             </nav>
-
 			</div>
-
-
 		</div>
 	</div>
 </div>
